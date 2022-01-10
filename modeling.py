@@ -2,19 +2,48 @@ from scipy import integrate
 
 import numpy as np
 
-# phi - пористость
+
 # mu - вязкость
 # c - общая сжимаемость системы
 # k - проницаемость
 
-phi, mu, c, k, h = 0.0, 0.1, 0.1, 0.1, 0.1
-p_0 = 1.3
-Q_0 = 0.4
+class Element:
+    def __init__(self, r, k, c, mu):
+        self.q = []
+        self.r = r
+        self.k = k
+        self.c = c
+        self.mu = mu
 
-XI = phi * mu * c / k
+    def coef1(self):
+        return 4 * self.k / (self.c * self.mu)
+
+    def coef2(self):
+        return self.mu / (4 * np.pi * self.k)
+
+    def generate_q(self):
+        self.q.append(np.random.randint(1, 25))
+        self.q.sort()
+
 
 f = lambda t: np.exp(-t) / t
+expint = lambda x: integrate.quad(f, x, np.inf)[0]
 
-expint = lambda x: integrate.quad(f, x / (4 * 1), np.inf)[0]
 
-p = lambda x: p_0 + (mu * Q_0) / (4 * np.pi * k) * expint(x)
+def find_summand(element, r, t, t_i):
+    res = 0
+    q = element.q
+    for i in range(1, len(q)):
+        arg = (r - element.r) / (element.coef1() * (t - t_i[i - 1]))
+        res += (q[i] - q[i - 1]) * expint(arg)
+
+    return -res
+
+
+def P(r, T, p_0, elements, t_i):
+    res = p_0
+
+    for elem in elements:
+        res += elem.coef2() * find_summand(elem, r, T, t_i)
+
+    return res
