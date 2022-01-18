@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Альфа версия рисования в браузере</title>
+</head>
+<body>
+<canvas id="myCanvas" width="350" height="250"
+        style="background-color:#eee; border: 1px solid #ccc; margin:10px;">
+</canvas>
+<div>
+    <span style="margin-right: 30px; margin-left: 80px;">H1</span>
+    <span style="margin-right: 50px; margin-left: 90px">H2</span>
+    <span style="margin-right: 60px; margin-left: 80px">H3</span>
+    <span style="margin-right: 50px; margin-left: 80px">H4</span>
+</div>
+<form action="" name="form" id="form">
+    <div class="pressure" style="margin-bottom: 10px;">
+        <span>P</span>
+        <input type="number" id="P1" step="any">
+        <input type="number" id="t1" step="any">
+        <input type="number" id="P2" step="any">
+        <input type="number" id="t2" step="any">
+    </div>
+    <div class="time">
+        <span style="margin-right: 4px;">t</span>
+        <input type="number" id="P3" step="any">
+        <input type="number" id="t3" step="any">
+        <input type="number" id="P4" step="any">
+        <input type="number" id="t4" step="any">
+    </div>
+    <button style="margin-top: 10px; margin-left: 10px;" type="submit">Посчитать график</button>
+</form>
+<script type="text/javascript" src="/eel.js"></script>
+<script>
+    var canvas = document.getElementById("myCanvas"),
+        context = canvas.getContext("2d"),
+        w = canvas.width,
+        h = canvas.height;
+
+    var mouse = {x: 0, y: 0};
+    var draw = 0;
+
+    canvas.addEventListener("mouseup", function (e) {
+        if (draw < 4) {
+            mouse.x = e.pageX - this.offsetLeft;
+            mouse.y = e.pageY - this.offsetTop;
+            context.fillRect(mouse.x, mouse.y, 6, 6);
+            draw++;
+        }
+    });
+
+    document.forms.form.onsubmit = async function () {
+        console.log(draw);
+        if (draw == 4) {
+            var p1 = document.getElementsByTagName("input")[0].value;
+            var p2 = document.getElementsByTagName("input")[1].value;
+            var p3 = document.getElementsByTagName("input")[2].value;
+            var p4 = document.getElementsByTagName("input")[3].value;
+
+            var t1 = document.getElementsByTagName("input")[4].value;
+            var t2 = document.getElementsByTagName("input")[5].value;
+            var t3 = document.getElementsByTagName("input")[6].value;
+            var t4 = document.getElementsByTagName("input")[7].value;
+            console.log(p1);
+            console.log(p2);
+            console.log(p3);
+            console.log(p4);
+
+            console.log(t1);
+            console.log(t2);
+            console.log(t3);
+            console.log(t4);
+        }
+
+        let res = await eel.build("1");
+        console.log(res);
+        return false;
+    };
+
+
+</script>
+</body>
+</html>
